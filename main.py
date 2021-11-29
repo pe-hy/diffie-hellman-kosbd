@@ -1,10 +1,10 @@
-
 import math
 import os
 from pathlib import Path
 from tkinter import Tk, filedialog
 import random as r
 from math import gcd as bltin_gcd
+
 
 class ChoiceHandler:
     # Konstruktor
@@ -41,6 +41,7 @@ class ChoiceHandler:
             2: 'Ne (exit)',
         }
 
+    # Slouží k vynulování proměnných a restartu programu.
     def restart_app(self):
         self.prime_p = None
         self.prim_root_g = None
@@ -56,6 +57,7 @@ class ChoiceHandler:
         self.is_picked = None
         ch.start()
 
+    # Nabízí uživateli, jestli chce pokračovat v používání programu. Pokud ano, zavolá restart_app().
     def keep_going(self):
         if self.encryptMode or self.decryptMode:
             while True:
@@ -72,10 +74,12 @@ class ChoiceHandler:
                 else:
                     print('Špatný výběr. Vložte číslo mezi 1 až 2.')
 
+    # Pomocná metoda k výpisu nabídky.
     def print_menu_keep_going(self):
         for key in self.menu_options_keep_going.keys():
             print(key, '--', self.menu_options_keep_going[key])
 
+    # Hlavní while loop, postupně provolává metody.
     def start(self):
         while self.encryptMode is None or self.decryptMode is None:
             self.print_menu_cypher_selection()
@@ -90,7 +94,7 @@ class ChoiceHandler:
                 self.select_p_g_key_gen()
                 self.secret_key_by_user1()
                 self.secret_key_by_user2()
-                self.calculate_public_keys()
+                self.calculate_keys()
                 self.encrypt_message()
                 self.keep_going()
             elif option == 2:
@@ -105,6 +109,7 @@ class ChoiceHandler:
             else:
                 print('Špatný výběr. Vložte číslo mezi 1 až 3.')
 
+    # Čte soubor k dešifrování, tedy ukládá do proměnné obsah txt souboru.
     def parse_input_file_for_decryption(self):
         self.open_file_text()
         while self.filename == '':
@@ -114,10 +119,12 @@ class ChoiceHandler:
         f = open(self.filename, "r", encoding="utf-8")
         self.parsedMessage = f.read()
 
+    # Pomocná metoda k výpisu nabídky.
     def print_menu_cypher_selection(self):
         for key in self.menu_options_cypher_selection.keys():
             print(key, '--', self.menu_options_cypher_selection[key])
 
+    # Výběr pro uživatele, jestli načíst textový soubor nebo vložit zprávu ručně do konzole.
     def select_input(self):
         if self.encryptMode:
             while self.parsedMessage is None:
@@ -140,10 +147,12 @@ class ChoiceHandler:
             self.open_file_text()
             print("Načtěte soubor, který chcete dešifrovat.")
 
+    # Pomocná metoda k výpisu nabídky.
     def print_menu_input_msg(self):
         for key in self.menu_options_input_message.keys():
             print(key, '--', self.menu_options_input_message[key])
 
+    # Ukáže obsah zprávy uživateli v konzoli.
     def show_input_text(self):
         self.parse_input_text_from_user()
         print("\nVložená zpráva k zašifrování: \n")
@@ -155,14 +164,17 @@ class ChoiceHandler:
             print(self.parsedMessage)
         print("\n--------- KONEC ZPRÁVY ---------\n")
 
+    # Uloží do proměnné zadanou zprávu, která je přetypovaná na string.
     def parse_input_text_from_user(self):
         temp = str(self.get_input_text_from_user())
         self.parsedMessage = temp
 
+    # Uloží do proměnné vstup uživatele.
     def get_input_text_from_user(self):
         input_msg = input("Vložte zprávu k zašifrování: ")
         return input_msg
 
+    # Otevírá tkinter dialog pro výběr souboru.
     def open_file_text(self):
         window = Tk()
         window.wm_attributes('-topmost', 1)
@@ -176,6 +188,7 @@ class ChoiceHandler:
             print("Zvolte soubor!")
             return
 
+    # Zobrazí obsah načteného txt souboru v konzoli.
     def show_input_file_as_text(self):
         self.parse_input_file_for_encryption()
         if len(self.parsedMessage) > 100:
@@ -190,6 +203,7 @@ class ChoiceHandler:
 
         print("\n--------- KONEC ZPRÁVY ---------\n")
 
+    # Uloží do proměnné obsah souboru, který je určen k zašifrování.
     def parse_input_file_for_encryption(self):
         while self.filename is None or self.filename == '':
             print("Nevybraný soubor. Vyberte soubor znovu.")
@@ -202,6 +216,7 @@ class ChoiceHandler:
 
         self.parsedMessage = temp
 
+    # Hlavní metoda pro zašifrování zprávy. Posune jednotlivé znaky dle klíče.
     def encrypt_message(self):
 
         encrypted_message = ""
@@ -215,8 +230,14 @@ class ChoiceHandler:
 
         return encrypted_message
 
+    # Hlavní metoda pro dešifrování zprávy. Posune jednotlivé znaky dle klíče zpět.
+    # Také vypíše výslednou dešifrovanou zprávu a soubor uloží.
     def decrypt_message(self):
         decrypted_message = ""
+        if not str.isnumeric(self.full_key):
+            print("Špatně zadaný klíč. ")
+            self.restart_app()
+
         key = int(self.full_key)
         for c in self.parsedMessage:
             decrypted_message += chr(ord(c) - key)
@@ -241,6 +262,8 @@ class ChoiceHandler:
 
         return decrypted_message
 
+    # Ukazuje uživateli nabídku, jestli chce náhodně generovat čísla p a g, nebo je ručně zadat.
+    # Dle výběru zavolá metody.
     def select_p_g_key_gen(self):
         while self.prime_p is None or self.prim_root_g is None:
             self.print_menu_p_g_selection()
@@ -262,10 +285,13 @@ class ChoiceHandler:
             else:
                 print('Špatný výběr. Vložte číslo mezi 1 až 3.')
 
+    # Pomocná metoda k výpisu nabídky.
     def print_menu_p_g_selection(self):
         for key in self.menu_p_q_selection.keys():
             print(key, '--', self.menu_p_q_selection[key])
 
+    # Generuje náhodné hodnoty prvočísla p.
+    # Číslo p potom posílá jako parametr metodě, která 1) najde všechny primitivní kořeny prvočísla p a za 2) náhodně vybere jeden z nich.
     def p_g_random(self):
         out = list()
         sieve = [True] * (2000 + 1)
@@ -279,6 +305,7 @@ class ChoiceHandler:
         self.prim_root_g = r.choice(self.prim_roots(self.prime_p))
         print("Prvočíslo p: ", self.prime_p, "Číslo g: ", self.prim_root_g)
 
+    # Nabídka uživateli k zadání prvočísla p.
     def prime_p_by_user(self):
         while self.prime_p is None:
             temp = input("Vložte p: ")
@@ -289,6 +316,8 @@ class ChoiceHandler:
             else:
                 self.prime_p = int(temp)
 
+    # Nabídka uživateli k zadání primitivního kořenu čísla p, g
+    # Pokud uživatel zadá nevhodný, zavolá se metoda prim_roots(), která vrátí všechny možné hodnoty, kterých může g nabývat.
     def primitive_root_g_by_user(self):
         while self.prim_root_g is None:
             temp = input("Vložte g: ")
@@ -300,29 +329,33 @@ class ChoiceHandler:
             else:
                 self.prim_root_g = int(temp)
 
+    # Nabídka uživateli, aby zvolil tajný exponent 1.
     def secret_key_by_user1(self):
         while self.private_key1 is None:
-            temp = input("Vložte tajný mocnitel 1: ")
+            temp = input("Vložte tajný exponent 1: ")
             if not str.isnumeric(temp):
                 print("Vložte pouze číslice.")
             else:
                 self.private_key1 = int(temp)
 
+    # Nabídka uživateli, aby zvolil tajný exponent 2.
     def secret_key_by_user2(self):
         while self.private_key2 is None:
-            temp = input("Vložte tajný mocnitel 2: ")
+            temp = input("Vložte tajný exponent 2: ")
             if not str.isnumeric(temp):
                 print("Vložte pouze číslice.")
             else:
                 self.private_key2 = int(temp)
 
+    # Metoda, která najde všechny primitivní kořeny g a vrátí jejich list.
     def prim_roots(self, modulo):
         required_set = {num for num in range(1, modulo) if bltin_gcd(num, modulo)}
         ret = [g for g in range(1, modulo) if required_set == {pow(g, powers, modulo)
-                                                                for powers in range(1, modulo)}]
+                                                               for powers in range(1, modulo)}]
 
         return ret
 
+    # Ověřuje, zda-li je číslo prvočíslem.
     def is_prime(self, n):
         if n == 2:
             return True
@@ -336,7 +369,8 @@ class ChoiceHandler:
                 return False
         return True
 
-    def calculate_public_keys(self):
+    # Hlavní metoda k výpočtu klíčů. Vypočte a vypíše celý postup výpočtu veřejných klíčů a tajných klíčů.
+    def calculate_keys(self):
         A = self.prim_root_g ** self.private_key1 % self.prime_p
         B = self.prim_root_g ** self.private_key2 % self.prime_p
         s1 = B ** self.private_key1 % self.prime_p
@@ -346,26 +380,30 @@ class ChoiceHandler:
             self.full_key = s1
             print("\n ---------- SIMULACE PŘENOSU ---------- ")
             if self.is_picked:
-                print("\n Vložili jste prvočíslo p a primitivní kořen modulo p - g: ", "[ p = ", self.prime_p, ", g = ", self.prim_root_g,"]")
+                print("\n Vložili jste prvočíslo p a primitivní kořen modulo p - g: ", "[ p = ", self.prime_p, ", g = ",
+                      self.prim_root_g, "]")
             elif not self.is_picked:
-                print("\n Náhodně jste vygenerovali prvočíslo g a primitivní kořen modulo p - g: ", "[ p = ", self.prime_p, ", g = ", self.prim_root_g,"]")
-            print("\n Vložili jste tajné mocnitele: ", "[ x = ", self.private_key1, ", y = ", self.private_key2,"]")
-            print("\n Proběhl výpočet a sdílení veřejných klíčů obou stran: ", "[ A = ", A, ", B = ", B,"]")
+                print("\n Náhodně jste vygenerovali prvočíslo g a primitivní kořen modulo p - g: ", "[ p = ",
+                      self.prime_p, ", g = ", self.prim_root_g, "]")
+            print("\n Vložili jste tajné exponenty: ", "[ x = ", self.private_key1, ", y = ", self.private_key2, "]")
+            print("\n Proběhl výpočet a sdílení veřejných klíčů obou stran: ", "[ A = ", A, ", B = ", B, "]")
             print("\n Obě strany si vypočítaly tajný klíč následujícím postupem: ")
             print("\n Strana 1: ", "s1 = ", "B^x % p")
             print("\n Strana 1: ", "s1 = ", B, "^", self.private_key1, "%", self.prime_p, " = ", s1)
             print("\n Strana 2: ", "s2 = ", "A^y % p")
             print("\n Strana 2: ", "s2 = ", A, "^", self.private_key2, "%", self.prime_p, " = ", s2)
             print("\n ----------------------------------------------------")
-            print("\n Oběma stranám vyšel stejný tajný klíč použitý k zašifrování: ", "[ s1 = ", s1, " s2 = ", s2,"]")
+            print("\n Oběma stranám vyšel stejný tajný klíč použitý k zašifrování: ", "[ s1 = ", s1, " s2 = ", s2, "]")
             print("\n ----------------------------------------------------")
             print("\n\n Zpráva byla zašifrovaná a uložena jako encrypted.txt.\n")
         else:
             print("Něco se pokazilo.")
 
+    # Nabídka uživateli, ať zadá klíč k dešifrování.
     def input_key(self):
         while self.full_key is None:
             self.full_key = input("Vložte tajný klíč použitý k zašifrování: ")
+
 
 if __name__ == '__main__':
     print("\n##----------------------- INFORMACE O PROGRAMU -----------------------##\n"
@@ -374,7 +412,7 @@ if __name__ == '__main__':
           "\nUživatel buď vybírá prvočíslo p a primitivní kořen modula p - g, nebo je program náhodně generuje."
           "\nV případě výběru náhodného generování, program sám generuje náhodné prvočíslo v intervalu 1-2000."
           "\nPokud uživatel zadá číslo g ručně, ale zvolí nevhodně, program sám vygeneruje nabídku čísel g, které jsou přijatelné pro zvolené prvočíslo p."
-          "\nUživatel dále zvolí tajné číslo x a tajné číslo y, tedy mocnitele."
+          "\nUživatel dále zvolí tajné číslo x a tajné číslo y, tedy exponenty."
           "\nProběhne simulace a názorná ukázka výpočtu veřejných klíčů A a B."
           "\nNa konci simulace proběhne taktéž výpočet tajného klíče. Ten se nikde neukládá, uživatel si jej musí zapamatovat."
           "\nK dešifrování je potřeba zvolit soubor se zašifrovaným textem a vložit tajný kód, který byl použitý k zašifrování tohoto textu."
