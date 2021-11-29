@@ -371,7 +371,7 @@ if __name__ == '__main__':
     print("\n##----------------------- INFORMACE O PROGRAMU -----------------------##\n"
           "\nProgram slouží k zašifrování libovolného textu ze vstupu uživatele či z textového souboru s příponou .txt."
           "\nProgram simuluje výměnu klíčů pomocí algoritmu Diffie-Hellman."
-          "\nUživatel buď vybírá prvočíslo p a primitivní kořen modula p - g, nebo je náhodně generuje."
+          "\nUživatel buď vybírá prvočíslo p a primitivní kořen modula p - g, nebo je program náhodně generuje."
           "\nV případě výběru náhodného generování, program sám generuje náhodné prvočíslo v intervalu 1-2000."
           "\nPokud uživatel zadá číslo g ručně, ale zvolí nevhodně, program sám vygeneruje nabídku čísel g, které jsou přijatelné pro zvolené prvočíslo p."
           "\nUživatel dále zvolí tajné číslo x a tajné číslo y, tedy mocnitele."
