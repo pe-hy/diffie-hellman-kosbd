@@ -6,6 +6,7 @@ from math import sqrt
 from pathlib import Path
 from tkinter import Tk, filedialog
 import random as r
+from math import gcd as bltin_gcd
 
 
 class ChoiceHandler:
@@ -175,11 +176,11 @@ class ChoiceHandler:
         return decrypted_message
 
     def select_public_key_gen(self):
-        while self.public_key1 is None and self.decryptMode is None and self.public_key2 is None:
+        while self.public_key1 is None or self.public_key2 is None:
             self.print_menu_public_key_selection()
             option = ''
             try:
-                option = int(input('Zvolte způsob generování inicializačního vektoru: '))
+                option = int(input('Zvolte způsob zadání 1. a 2. veřejného klíče: '))
             except:
                 print('Špatný výběr. Zkuste to znovu.')
             if option == 1:
@@ -212,28 +213,24 @@ class ChoiceHandler:
             self.public_key2 = r.choice(primes)
 
     def public_key_1_by_user(self):
-        temp = "4"
-        while not str.isnumeric(temp) and not self.is_prime(int(temp)):
+        while self.public_key1 is None:
             temp = input("Vložte veřejný klíč 1")
-            if not self.is_prime(temp):
-                print("Vložte prvočíslo.")
-            elif not str.isnumeric(temp):
+            if not str.isnumeric(temp):
                 print("Vložte pouze číslice.")
+            elif not self.is_prime(int(temp)):
+                print("Vložte prvočíslo.")
             else:
                 self.public_key1 = temp
-                print(self.public_key1)
 
     def public_key_2_by_user(self):
-        temp = ""
-        while len(temp) != 16 or not str.isascii(temp):
-            temp = input("Vložte veřejný klíč 1")
-            if len(temp) != 16:
-                print("Vložený počet znaků: ", len(temp))
-                print("Vložili jste nevhodný počet znaků. Inicializační vektor musí mít délku 16 znaků")
-            elif not str.isascii(temp):
-                print("Vložili jste inicializační vektor s diakritikou. Použijte znaky ASCII.")
+        while self.public_key2 is None:
+            temp = input("Vložte P: ")
+            if not str.isnumeric(temp):
+                print("Vložte pouze číslice.")
+            elif not self.is_prime(int(temp)):
+                print("Vložte prvočíslo.")
             else:
-                self.iv = temp
+                self.public_key2 = temp
 
     def secret_key_by_user(self):
         temp = ""
@@ -246,6 +243,11 @@ class ChoiceHandler:
                 print("Vložili jste inicializační vektor s diakritikou. Použijte znaky ASCII.")
             else:
                 self.iv = temp
+
+    def primRoots(self, modulo):
+        required_set = {num for num in range(1, modulo) if bltin_gcd(num, modulo)}
+        return r.choice([g for g in range(1, modulo) if required_set == {pow(g, powers, modulo)
+                                                                for powers in range(1, modulo)}])
 
     def is_prime(self, n):
         if n == 2:
@@ -262,4 +264,5 @@ class ChoiceHandler:
 
 if __name__ == '__main__':
     ch = ChoiceHandler()
+    print(ch.primRoots(23))
     ch.start()
