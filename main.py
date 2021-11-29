@@ -295,7 +295,7 @@ class ChoiceHandler:
             if not str.isnumeric(temp):
                 print("Vložte pouze číslice.")
             elif int(temp) not in self.prim_roots(int(self.prime_p)):
-                print("Číslo g není primitivním kořenem modulo P. Napište jedno z následujících čísel: ")
+                print("Číslo g není primitivním kořenem modulo p. Napište jedno z následujících čísel: ")
                 print(self.prim_roots(int(self.prime_p)))
             else:
                 self.prim_root_g = int(temp)
@@ -348,7 +348,7 @@ class ChoiceHandler:
             if self.is_picked:
                 print("\n Vložili jste prvočíslo p a primitivní kořen modulo p - g: ", "[ p = ", self.prime_p, ", g = ", self.prim_root_g,"]")
             elif not self.is_picked:
-                print("\n Náhodně jste vygenerovali prvočíslo g a primitivní kořen modulo g - g: ", "[ p = ", self.prime_p, ", g = ", self.prim_root_g,"]")
+                print("\n Náhodně jste vygenerovali prvočíslo g a primitivní kořen modulo p - g: ", "[ p = ", self.prime_p, ", g = ", self.prim_root_g,"]")
             print("\n Vložili jste tajné mocnitele: ", "[ x = ", self.private_key1, ", y = ", self.private_key2,"]")
             print("\n Proběhl výpočet a sdílení veřejných klíčů obou stran: ", "[ A = ", A, ", B = ", B,"]")
             print("\n Obě strany si vypočítaly tajný klíč následujícím postupem: ")
